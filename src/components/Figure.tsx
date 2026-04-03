@@ -6,64 +6,59 @@ interface FigureProps {
   isSelected: boolean;
 }
 
-const RADIUS = 18;
 const HP_BAR_HEIGHT = 4;
 const HP_BAR_WIDTH = CELL_SIZE - 10;
 
 export default function Figure({ figure, isSelected }: FigureProps) {
-  const cx = figure.pos.col * CELL_SIZE + CELL_SIZE / 2;
-  const cy = figure.pos.row * CELL_SIZE + CELL_SIZE / 2;
+  const x = figure.pos.col * CELL_SIZE;
+  const y = figure.pos.row * CELL_SIZE;
 
   const hpRatio = figure.hp / figure.maxHp;
-  const hpBarX = cx - HP_BAR_WIDTH / 2;
-  const hpBarY = cy + RADIUS - 2;
+  const hpBarX = x + (CELL_SIZE - HP_BAR_WIDTH) / 2;
+  const hpBarY = y + CELL_SIZE - HP_BAR_HEIGHT - 2;
 
   const spent = figure.hasMoved && figure.hasAttacked;
-  const label = figure.team === 'skejci'
-    ? `S${figure.id.split('-')[1] ? String(Number(figure.id.split('-')[1]) + 1) : ''}`
-    : `D${figure.id.split('-')[1] ? String(Number(figure.id.split('-')[1]) + 1) : ''}`;
+  const sprite = figure.team === 'skejci' ? 'skejc' : 'dresiar';
 
   return (
     <g
       className={`figure figure--${figure.team}${isSelected ? ' figure--selected' : ''}${spent ? ' figure--spent' : ''}`}
-      data-row={figure.pos.row}
-      data-col={figure.pos.col}
-      data-figureid={figure.id}
     >
-      {/* Selection ring */}
+      {/* Selection ring — square cursor suits pixel art */}
       {isSelected && (
-        <circle
-          cx={cx}
-          cy={cy}
-          r={RADIUS + 4}
+        <rect
+          x={x + 2}
+          y={y + 2}
+          width={CELL_SIZE - 4}
+          height={CELL_SIZE - 4}
           className="figure__selection-ring"
           style={{ pointerEvents: 'none' }}
         />
       )}
 
-      {/* Body */}
-      <circle
-        cx={cx}
-        cy={cy}
-        r={RADIUS}
-        className="figure__body"
+      {/* Pixel art sprite */}
+      <image
+        href={`/assets/sprites/${sprite}.svg`}
+        x={x}
+        y={y}
+        width={CELL_SIZE}
+        height={CELL_SIZE}
+        style={{ imageRendering: 'pixelated', pointerEvents: 'none' }}
+      />
+
+      {/* Transparent click target — carries data-* for Board's event handler */}
+      <rect
+        x={x}
+        y={y}
+        width={CELL_SIZE}
+        height={CELL_SIZE}
+        fill="none"
         data-row={figure.pos.row}
         data-col={figure.pos.col}
         data-figureid={figure.id}
       />
 
-      {/* Label */}
-      <text
-        x={cx}
-        y={cy + 5}
-        textAnchor="middle"
-        className="figure__label"
-        style={{ pointerEvents: 'none' }}
-      >
-        {label}
-      </text>
-
-      {/* HP bar background */}
+      {/* HP bar */}
       <rect
         x={hpBarX}
         y={hpBarY}
@@ -72,8 +67,6 @@ export default function Figure({ figure, isSelected }: FigureProps) {
         className="figure__hp-bg"
         style={{ pointerEvents: 'none' }}
       />
-
-      {/* HP bar fill */}
       <rect
         x={hpBarX}
         y={hpBarY}

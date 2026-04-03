@@ -13,13 +13,12 @@
   cursor: pointer;
 }
 
-/* Grid cells */
+/* Grid cells — fill comes from sprite image; rect is transparent hit-target only */
 .cell {
   stroke: var(--cell-border);
   stroke-width: 0.5;
+  fill: none;
 }
-.cell.cell-a { fill: var(--cell-a); }
-.cell.cell-b { fill: var(--cell-b); }
 
 /* Overlays */
 .overlay--move { fill: var(--highlight-move); }
@@ -29,32 +28,12 @@
 .figure { cursor: pointer; }
 .figure--spent { opacity: 0.45; }
 
-.figure--skejci .figure__body { fill: var(--skejci); }
-.figure--dresy  .figure__body { fill: var(--dresy); }
-
-.figure__body {
-  stroke: rgba(0, 0, 0, 0.4);
-  stroke-width: 2;
-}
-
-.figure--selected .figure__body {
-  stroke: var(--hud-accent);
-  stroke-width: 3;
-}
-
 .figure__selection-ring {
   fill: none;
   stroke: var(--hud-accent);
   stroke-width: 2;
-  stroke-dasharray: 6 3;
+  stroke-dasharray: 5 3;
   opacity: 0.9;
-}
-
-.figure__label {
-  fill: #fff;
-  font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: bold;
 }
 
 /* HP bars */
