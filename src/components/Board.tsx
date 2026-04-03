@@ -4,6 +4,7 @@ import { resolveClick } from '../reducer';
 import Cell from './Cell';
 import Figure from './Figure';
 import Overlay from './Overlay';
+import ObstacleShape from './ObstacleShape';
 import './Board.css';
 
 interface BoardProps {
@@ -18,7 +19,6 @@ export default function Board({ state, dispatch }: BoardProps) {
   function handleClick(e: React.MouseEvent<SVGSVGElement>) {
     const target = e.target as SVGElement;
 
-    // Walk up to find data-row/data-col — figure group's children also carry these
     let el: Element | null = target;
     while (el && el !== e.currentTarget) {
       const row = (el as HTMLElement).dataset?.row;
@@ -54,7 +54,15 @@ export default function Board({ state, dispatch }: BoardProps) {
         {/* Layer 3: valid attack highlights */}
         <Overlay positions={state.validAttacks} variant="attack" />
 
-        {/* Layer 4: figures */}
+        {/* Layer 4: obstacles (non-interactive) */}
+        {state.obstacles.map((obs) => (
+          <ObstacleShape
+            key={`${obs.pos.row}-${obs.pos.col}`}
+            obstacle={obs}
+          />
+        ))}
+
+        {/* Layer 5: figures */}
         {state.figures
           .filter((f) => f.hp > 0)
           .map((f) => (

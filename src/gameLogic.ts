@@ -1,8 +1,8 @@
-import type { Figure, Position } from './types';
+import type { Figure, Obstacle, Position } from './types';
 
-export const GRID_ROWS = 10;
-export const GRID_COLS = 12;
-export const CELL_SIZE = 60;
+export const GRID_ROWS = 14;
+export const GRID_COLS = 20;
+export const CELL_SIZE = 50;
 
 export function posEq(a: Position, b: Position): boolean {
   return a.row === b.row && a.col === b.col;
@@ -15,18 +15,22 @@ export function chebyshev(a: Position, b: Position): number {
 export function computeMoveRange(
   figure: Figure,
   allFigures: Figure[],
+  obstacles: Obstacle[],
 ): Position[] {
-  const occupied = new Set(
-    allFigures
-      .filter((f) => f.id !== figure.id)
-      .map((f) => `${f.pos.row},${f.pos.col}`),
-  );
+  const blocked = new Set<string>();
+
+  for (const f of allFigures) {
+    if (f.id !== figure.id) blocked.add(`${f.pos.row},${f.pos.col}`);
+  }
+  for (const o of obstacles) {
+    blocked.add(`${o.pos.row},${o.pos.col}`);
+  }
 
   const results: Position[] = [];
   for (let r = 0; r < GRID_ROWS; r++) {
     for (let c = 0; c < GRID_COLS; c++) {
       const dist = chebyshev(figure.pos, { row: r, col: c });
-      if (dist > 0 && dist <= figure.moveRange && !occupied.has(`${r},${c}`)) {
+      if (dist > 0 && dist <= figure.moveRange && !blocked.has(`${r},${c}`)) {
         results.push({ row: r, col: c });
       }
     }

@@ -1,4 +1,4 @@
-import type { Figure, GameState, GameAction, TeamId } from './types';
+import type { Figure, Obstacle, GameState, GameAction, TeamId } from './types';
 import {
   computeMoveRange,
   computeAttackRange,
@@ -7,7 +7,7 @@ import {
 } from './gameLogic';
 
 const MAX_HP = 50;
-const MOVE_RANGE = 3;
+const MOVE_RANGE = 4;
 const ATTACK_DAMAGE = 15;
 
 function makeFigure(
@@ -30,24 +30,48 @@ function makeFigure(
   };
 }
 
+const OBSTACLES: Obstacle[] = [
+  // Auta
+  { pos: { row: 2, col: 7 },  kind: 'auto' },
+  { pos: { row: 2, col: 12 }, kind: 'auto' },
+  { pos: { row: 6, col: 9 },  kind: 'auto' },
+  { pos: { row: 7, col: 10 }, kind: 'auto' },
+  { pos: { row: 11, col: 7 }, kind: 'auto' },
+  { pos: { row: 11, col: 12 }, kind: 'auto' },
+  // Kiosks
+  { pos: { row: 4, col: 5 },  kind: 'kiosk' },
+  { pos: { row: 9, col: 14 }, kind: 'kiosk' },
+  { pos: { row: 6, col: 17 }, kind: 'kiosk' },
+  // Kosze
+  { pos: { row: 1, col: 6 },  kind: 'kosz' },
+  { pos: { row: 1, col: 13 }, kind: 'kosz' },
+  { pos: { row: 4, col: 11 }, kind: 'kosz' },
+  { pos: { row: 5, col: 8 },  kind: 'kosz' },
+  { pos: { row: 8, col: 11 }, kind: 'kosz' },
+  { pos: { row: 9, col: 7 },  kind: 'kosz' },
+  { pos: { row: 12, col: 6 }, kind: 'kosz' },
+  { pos: { row: 12, col: 13 }, kind: 'kosz' },
+];
+
 export function createInitialState(): GameState {
   const figures: Figure[] = [
-    // Skejci — lewa strona (kol 0-1)
+    // Skejci — lewa strona (kol 0)
     makeFigure('skejci', 0, 1, 0),
-    makeFigure('skejci', 1, 3, 0),
-    makeFigure('skejci', 2, 5, 0),
-    makeFigure('skejci', 3, 7, 0),
-    makeFigure('skejci', 4, 9, 1),
-    // Dresy — prawa strona (kol 10-11)
-    makeFigure('dresy', 0, 1, 11),
-    makeFigure('dresy', 1, 3, 11),
-    makeFigure('dresy', 2, 5, 11),
-    makeFigure('dresy', 3, 7, 11),
-    makeFigure('dresy', 4, 9, 10),
+    makeFigure('skejci', 1, 4, 0),
+    makeFigure('skejci', 2, 6, 0),
+    makeFigure('skejci', 3, 9, 0),
+    makeFigure('skejci', 4, 12, 0),
+    // Dresy — prawa strona (kol 19)
+    makeFigure('dresy', 0, 1, 19),
+    makeFigure('dresy', 1, 4, 19),
+    makeFigure('dresy', 2, 6, 19),
+    makeFigure('dresy', 3, 9, 19),
+    makeFigure('dresy', 4, 12, 19),
   ];
 
   return {
     figures,
+    obstacles: OBSTACLES,
     currentTeam: 'skejci',
     phase: 'idle',
     selectedFigureId: null,
@@ -82,7 +106,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
       const validMoves = figure.hasMoved
         ? []
-        : computeMoveRange(figure, state.figures);
+        : computeMoveRange(figure, state.figures, state.obstacles);
       const validAttacks = computeAttackRange(figure, state.figures);
 
       return {
@@ -189,7 +213,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
   }
 }
 
-// Handle click on the board — dispatches correct action based on game state
 export function resolveClick(
   state: GameState,
   row: number,
@@ -199,7 +222,6 @@ export function resolveClick(
   const pos = { row, col };
   const clickedFigure = figureAt(pos, state.figures);
 
-  // Click on own figure → select/reselect
   if (clickedFigure && clickedFigure.team === state.currentTeam) {
     if (
       state.selectedFigureId === clickedFigure.id &&
@@ -212,7 +234,6 @@ export function resolveClick(
     return;
   }
 
-  // Click on enemy figure → attack if valid
   if (clickedFigure && clickedFigure.team !== state.currentTeam) {
     if (
       state.selectedFigureId &&
@@ -224,13 +245,11 @@ export function resolveClick(
     return;
   }
 
-  // Click on empty cell → move if valid
   if (!clickedFigure) {
     if (state.selectedFigureId && posInList(pos, state.validMoves)) {
       dispatch({ type: 'MOVE_FIGURE', to: pos });
       return;
     }
-    // Click empty non-valid cell → deselect
     if (state.selectedFigureId) {
       dispatch({ type: 'DESELECT' });
     }

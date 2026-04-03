@@ -6,9 +6,9 @@ interface FigureProps {
   isSelected: boolean;
 }
 
-const RADIUS = 22;
-const HP_BAR_HEIGHT = 5;
-const HP_BAR_WIDTH = CELL_SIZE - 12;
+const RADIUS = 18;
+const HP_BAR_HEIGHT = 4;
+const HP_BAR_WIDTH = CELL_SIZE - 10;
 
 export default function Figure({ figure, isSelected }: FigureProps) {
   const cx = figure.pos.col * CELL_SIZE + CELL_SIZE / 2;

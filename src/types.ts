@@ -1,5 +1,11 @@
 export type TeamId = 'skejci' | 'dresy';
 export type TurnPhase = 'idle' | 'selected' | 'moved';
+export type ObstacleKind = 'kosz' | 'kiosk' | 'auto';
+
+export interface Obstacle {
+  pos: Position;
+  kind: ObstacleKind;
+}
 
 export interface Position {
   row: number;
@@ -21,6 +27,7 @@ export interface Figure {
 
 export interface GameState {
   figures: Figure[];
+  obstacles: Obstacle[];
   currentTeam: TeamId;
   phase: TurnPhase;
   selectedFigureId: string | null;
