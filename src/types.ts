@@ -1,10 +1,13 @@
 export type TeamId = 'skejci' | 'dresy';
 export type TurnPhase = 'idle' | 'selected' | 'moved';
-export type ObstacleKind = 'kosz' | 'kiosk' | 'auto';
+export type ObstacleKind = 'kosz' | 'kiosk' | 'auto' | 'lawka';
 
 export interface Obstacle {
-  pos: Position;
+  id: string;
   kind: ObstacleKind;
+  origin: Position; // top-left cell
+  cols: number;     // width in cells
+  rows: number;     // height in cells
 }
 
 export interface Position {

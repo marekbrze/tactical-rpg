@@ -12,6 +12,16 @@ export function chebyshev(a: Position, b: Position): number {
   return Math.max(Math.abs(a.row - b.row), Math.abs(a.col - b.col));
 }
 
+export function obstacleKeys(obs: Obstacle): string[] {
+  const keys: string[] = [];
+  for (let r = obs.origin.row; r < obs.origin.row + obs.rows; r++) {
+    for (let c = obs.origin.col; c < obs.origin.col + obs.cols; c++) {
+      keys.push(`${r},${c}`);
+    }
+  }
+  return keys;
+}
+
 export function computeMoveRange(
   figure: Figure,
   allFigures: Figure[],
@@ -23,7 +33,7 @@ export function computeMoveRange(
     if (f.id !== figure.id) blocked.add(`${f.pos.row},${f.pos.col}`);
   }
   for (const o of obstacles) {
-    blocked.add(`${o.pos.row},${o.pos.col}`);
+    for (const key of obstacleKeys(o)) blocked.add(key);
   }
 
   const results: Position[] = [];

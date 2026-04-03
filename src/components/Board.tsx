@@ -56,10 +56,7 @@ export default function Board({ state, dispatch }: BoardProps) {
 
         {/* Layer 4: obstacles (non-interactive) */}
         {state.obstacles.map((obs) => (
-          <ObstacleShape
-            key={`${obs.pos.row}-${obs.pos.col}`}
-            obstacle={obs}
-          />
+          <ObstacleShape key={obs.id} obstacle={obs} />
         ))}
 
         {/* Layer 5: figures */}
