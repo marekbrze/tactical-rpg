@@ -38,7 +38,7 @@ export default function Figure({ figure, isSelected }: FigureProps) {
 
       {/* Pixel art sprite */}
       <image
-        href={`/assets/sprites/${sprite}.svg`}
+        href={`${import.meta.env.BASE_URL}assets/sprites/${sprite}.svg`}
         x={x}
         y={y}
         width={CELL_SIZE}

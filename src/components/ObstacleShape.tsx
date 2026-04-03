@@ -11,7 +11,7 @@ export default function ObstacleShape({ obstacle }: Props) {
 
   return (
     <image
-      href={`/assets/sprites/${obstacle.kind}.svg`}
+      href={`${import.meta.env.BASE_URL}assets/sprites/${obstacle.kind}.svg`}
       x={x}
       y={y}
       width={obstacle.cols * CELL_SIZE}

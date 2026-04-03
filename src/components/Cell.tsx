@@ -13,7 +13,7 @@ export default function Cell({ row, col }: CellProps) {
   return (
     <g>
       <image
-        href={`/assets/sprites/${tile}.svg`}
+        href={`${import.meta.env.BASE_URL}assets/sprites/${tile}.svg`}
         x={x}
         y={y}
         width={CELL_SIZE}
